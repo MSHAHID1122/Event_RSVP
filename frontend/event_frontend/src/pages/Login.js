@@ -3,15 +3,16 @@ import {login} from '../api/auth';
 import {useNavigate} from 'react-router-dom'
 
 function Login(){
-    const [email,setEmail]= useState();
-    const [password,setPassword]=useState();
+    const [username,setusername]= useState('');
+    const [email,setEmail]= useState('');
+    const [password,setPassword]=useState('');
     const navigate = useNavigate();
 
 
     const handleLogin= async(e)=>{
         e.preventDefault();
         try{
-          const res  = await login({email,password});
+          const res  = await login({username,email,password});
           localStorage.setItem('token',res.data.access);
           navigate('/home');
         }
@@ -22,6 +23,9 @@ function Login(){
     
    return( <form onSubmit={handleLogin}>
     <h1>Login</h1>
+     <label>Enter Username</label>
+    <input type='text' value={username} onChange={e=>setusername(e.target.value)}/>
+    <br></br>
     <label>Enter your email</label>
     <input type='email' value={email} onChange={e=>setEmail(e.target.value)}/>
     <br></br>

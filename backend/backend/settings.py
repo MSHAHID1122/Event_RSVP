@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from winreg import ExpandEnvironmentStrings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,9 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     "users",
-    "accounts"
+    "accounts",
+    "djoser",
 ]
 
 
@@ -50,16 +53,22 @@ REST_FRAMEWORK = {
     )
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
-INSTALLED_APPS += [
-    'djoser',
-]
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
 DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}/',
     'SEND_ACTIVATION_EMAIL': True,
-    'ACTIVATION_URL': 'verify-email/{uid}/{token}/',
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
-    }
+        'user': 'djoser.serializers.UserSerializer',
+        'current_user': 'djoser.serializers.UserSerializer',
+    },
 }
 
 MIDDLEWARE = [
@@ -70,7 +79,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-   
     'corsheaders.middleware.CorsMiddleware',
 
 ]
